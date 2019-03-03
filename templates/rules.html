@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Spot It!</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script>
+  function getQueryString() {
+  var result = {}, queryString = location.search.slice(1),
+      re = /([^&=]+)=([^&]*)/g, m;
+
+  while (m = re.exec(queryString)) {
+    result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+  }
+
+  return result;
+}
+var name = getQueryString()["player_name"];
+var playerName = name.replace('+', " ");
+  </script>
+  <style>
+body{
+  background: #1ABC9C;
+}
+</style>
+</head>
+<body>
+<div class="jumbotron text-center" style="background: #034f84;">
+  <h1 style="font-family: 'Times New Roman', Times, serif; color:white;">SPOT IT!</h1>
+  <p style="color:white">Increase your brain power by spotting things in images</p>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div id="name">
+        <p><b>Welcome 
+		<script>
+		document.write(playerName);
+		</script></b>
+		</p>
+		The rules of the game are as follows:
+		<p>
+		<p>
+		Rule 1
+		</p>
+		<p>
+		Rule 2
+		</p>
+		<form action="imageFlip.html">
+		<input type="submit" value="Continue">
+		</form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

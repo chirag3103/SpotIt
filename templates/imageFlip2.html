@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Spot It!</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="recorder.js"></script>
+<style>
+#f1_container {
+    position: relative;
+    margin-left: 10%;
+    width: 800px;
+    height: 450px;
+    z-index: 1;
+}
+
+#f1_card {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: all 1.0s linear;
+}
+
+.column {
+
+    width: 100%;
+    padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+/* Style the buttons */
+.button {
+    border: none;
+    outline: none;
+    padding: 120px 160px;
+    cursor: pointer;
+}
+button {
+    background-color: #f1f1f1; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 50px;
+    margin: 4px 2px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+
+
+button:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.hyperspan {
+position:absolute;
+width:100%;
+height:100%;
+left:0;
+top:0;
+}
+.hyper {
+position:absolute;
+width:100%;
+height:100%;
+left:0;
+top:0;
+}
+
+.face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+}
+.face.back {
+    display: block;
+    transform: rotateX(180deg);
+    padding: 10px;
+    color: white;
+    text-align: center;
+
+}
+.column{
+  height: 300px;
+  width: 800px;
+}
+body{
+  background: #1ABC9C;
+}
+#f1_container {
+  position: relative;
+  margin-left:24%;
+  width: 450px;
+  height: 281px;
+  z-index: 1;
+}
+#f1_container {
+  perspective: 1000;
+}
+#f1_card {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: all 1.0s linear;
+}
+.flip {
+  transform: rotateX(180deg);
+  box-shadow: -5px 5px 5px #aaa;
+}
+.face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+.face.back {
+  display: block;
+  transform: rotateX(180deg);
+  box-sizing: border-box;
+  padding: 10px;
+  color: white;
+  text-align: center;
+  background-color: #aaa;
+}
+span{
+  font-size: "20px;"
+}
+button {width: 300px;}
+</style>
+<script>
+window.onload = function () {
+  var audio_1;
+  var fragmentTime;
+
+  jQuery('.timeout_message_show').hide();
+
+  var minutes = jQuery('span.minute').text();
+
+  var seconds = jQuery('span.second').text();
+
+  minutes = parseInt(minutes);
+
+  seconds = parseInt(seconds);
+
+  if (isNaN(minutes)) {
+
+  minutes = 00;
+
+  }
+
+  if (isNaN(seconds)) {
+
+  seconds = 00;
+
+  }
+
+
+  if (seconds == 15) {
+
+  seconds = 14;
+
+  }
+
+  fragmentTime =  (seconds);
+
+  displayMinute = document.querySelector('span.minute');
+
+  displaySecond = document.querySelector('span.second');
+
+  <!--startTimer(fragmentTime, displayMinute, displaySecond);-->
+
+  function startTimer(duration, displayMinute, displaySecond) {
+
+  var timer = duration,
+
+  displayMinute, displaySecond;
+
+  var timeIntervalID = setInterval(function () {
+
+  minutes = parseInt(timer / 60, 10)
+
+  seconds = parseInt(timer % 60, 10);
+
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+
+  seconds = seconds < 10 ? "0" + seconds : seconds;
+
+  displayMinute.textContent = minutes;
+
+  displaySecond.textContent = seconds;
+
+  if (--timer < 0) {
+
+  timer = 0;
+
+  if (timer == 0) {
+
+  clearInterval(timeIntervalID);
+
+  var content = document.getElementById('f1_card');
+  var c = 0;
+
+  content.className = content.className + ' flip';
+  $("#question_text").show();
+  var playAudio = new Audio(audio_1);
+  playAudio.play();
+
+
+
+  }
+
+  }
+
+  }, 1000);}
+
+
+
+$(document).ready(function() {
+var start_btn = document.getElementById('start_game');  
+var btn = document.getElementById('flip_content');
+var scr = document.getElementById('1');
+var scr2 = document.getElementById('2');
+var scr3 = document.getElementById('3');
+var scr4 = document.getElementById('4');
+var content = document.getElementById('f1_card');
+var questions;
+var audio;
+var ans;
+var c = 0;
+var counter = 0;
+var answered = false;
+
+var score = 0;
+
+start_btn.onclick = function() {
+  $("#start_div").hide();
+  $("#flip_content").hide();
+  $("#game").show();
+  if(counter == 0){
+  $.getJSON('http://localhost:5000/api/questions', function(results) {
+
+    // console.log(results);
+    questions = results.questions;
+    startTimer(fragmentTime, displayMinute, displaySecond);
+      var count = 1;
+      var imgC=0;
+      audio = "http://localhost:5000/audio/"+questions[counter].id+".mp3";
+      audio_1 = audio;
+      ans = questions[counter].answer;
+      $("#question_text").hide();
+      $("#question_text").html(questions[counter].question)
+      console.log(c);
+          while(imgC<4){
+          var id= 'i'+count;
+          console.log(count);
+          var img= "<img src='http://localhost:5000/images/"+questions[counter].images[imgC]+"' height='280' width='750'>";
+          document.getElementById(id).innerHTML = img;
+          count++;
+          imgC++;
+          }
+          counter++;
+          });
+}
+}
+
+btn.onclick = function() {
+  if(counter < 10){
+  // content.className = (c++ % 2 == 0) ? content.className + ' flip' : content.className.split(' ')[0];
+  content.className = content.className.split(' ')[0];
+  // if(c%2==0){
+    answered = false
+    $("#flip_content").hide();
+    startTimer(fragmentTime, displayMinute, displaySecond);
+    var count = 1;
+  	var imgC=0;
+  	audio = "http://localhost:5000/audio/"+questions[counter].id+".mp3";
+  	audio_1 = audio;
+  	ans = questions[counter].answer;
+  	$("#question_text").hide();
+    $("#question_text").html(questions[counter].question)
+  	// console.log(c);
+  		while(imgC<4){
+    			var id= 'i'+count;
+    			console.log(count);
+    			var img= "<img src='http://localhost:5000/images/"+questions[counter].images[imgC]+"' height='280' width='750'>";
+    			document.getElementById(id).innerHTML = img;
+    			count++;
+    			imgC++;
+  			}
+  	counter++;
+}
+else{
+    alert("Congratulations your score is "+score);
+  	window.location.href = "index.html";
+  }
+}
+
+scr.onclick = function(){
+if(!answered && ans ==1)
+{
+ score++;
+
+ var playAudio = new Audio("http://localhost:5000/audio/correct_answer.mp3");
+  playAudio.play();
+ }
+ else if(ans ==1) {
+  var playAudio = new Audio("http://localhost:5000/audio/correct_answer.mp3");
+  playAudio.play();
+ }
+ else {
+ var playAudio = new Audio("http://localhost:5000/audio/wrong_answer.mp3");
+ playAudio.play();
+ }
+ answered = true
+ $("#flip_content").show();
+};
+scr2.onclick = function(){
+if(!answered && ans ==2)
+{
+ score++;
+ var playAudio = new Audio("http://localhost:5000/audio/correct_answer.mp3");
+  playAudio.play();
+ }
+ else if(ans ==2) {
+  var playAudio = new Audio("http://localhost:5000/audio/correct_answer.mp3");
+  playAudio.play();
+ }
+ else{
+ var playAudio = new Audio("http://localhost:5000/audio/wrong_answer.mp3");
+ playAudio.play();
+ }
+ answered = true
+ $("#flip_content").show();
+};
+scr3.onclick = function(){
+if(!answered && ans ==3)
+{
+ score++;
+ var playAudio = new Audio("http://localhost:5000/audio/correct_answer.mp3");
+  playAudio.play();
+ }
+ else if(ans ==3) {
+  var playAudio = new Audio("http://localhost:5000/audio/correct_answer.mp3");
+  playAudio.play();
+ }
+ else{
+ var playAudio = new Audio("http://localhost:5000/audio/wrong_answer.mp3");
+ playAudio.play();
+ }
+ answered = true
+ $("#flip_content").show();
+};
+scr4.onclick = function(){
+if(!answered && ans ==4)
+{
+ score++;
+ var playAudio = new Audio("http://localhost:5000/audio/correct_answer.mp3");
+  playAudio.play();
+ }
+ else if(ans ==4) {
+  var playAudio = new Audio("http://localhost:5000/audio/correct_answer.mp3");
+  playAudio.play();
+ }
+ else{
+ var playAudio = new Audio("http://localhost:5000/audio/wrong_answer.mp3");
+ playAudio.play();
+ }
+ answered = true
+ $("#flip_content").show();
+};
+
+});
+
+};
+
+
+</script>
+</head>
+
+<script>
+    </script>
+    <body>
+<div class="nav-bar-top">
+  <div style="background: #034f84; text-align: center">
+    <h1 style="font-family: 'Times New Roman', Times, serif; color:white;">SPOT IT!</h1>
+  </div>
+
+</div>
+<div id="start_div" style="display: flex;align-items: center;justify-content: center;margin-bottom: 20px;height: 200px;">
+  <button class="btn btn-primary" id="start_game">Start</button>
+</div>
+<div id="game" style="display: none;">
+  <div class="timer-container" id="#run-the-timer" style=" text-align: center">
+  <span class="minute">00</span>:<span class="second">10</span>
+  <div id="f1_container">
+
+     <div id="f1_card" class="shadow">
+         <div class="front face">
+           <div class="row">
+    <div id="i1" class="column" style="background-color:#aaa;">
+
+    </div>
+    <div id="i2"class="column" style="background-color:#bbb;">
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div id="i3" class="column" style="background-color:#ccc;">
+
+    </div>
+    <div id="i4" class="column" style="background-color:#ddd;">
+
+    </div>
+  </div>
+
+         </div>
+
+
+
+         <div class="back face center" style="text-align: center">
+
+           <div class="row">
+
+    <div class="column" style="background-color:#aaa;">
+  <div id="question_text" style="color:black;"></div>
+  <button class="btn btn-primary" id="flip_content">Next</button>
+  <br>
+  <div id="b1" class="nav">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  <button id="1" class="btn btn-primary">Option 1</button>
+  </div>
+    </div>
+    <div class="column" style="background-color:#bbb;">
+      <div id="b2" class="nav">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+    <button id="2" class="btn btn-primary">Option 2</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column" style="background-color:#ccc;">
+      <div id="b3" class="nav">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+    <button id="3" class="btn btn-primary">Option 3</button>
+      </div>
+    </div>
+    <div class="column" style="background-color:#ddd;">
+      <div id="b4" class="nav">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+      <button id="4" class="btn btn-primary">Option 4</button>
+      </div>
+    </div>
+  </div>
+         </div>
+     </div>
+  </div>
+</div>
+
+</body>
+</html>

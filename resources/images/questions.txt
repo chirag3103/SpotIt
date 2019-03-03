@@ -1,0 +1,21 @@
+face.jpg
+label: eyewear
+
+car.jpg
+label: car
+
+boating.jpg
+labels: sailing
+
+billa.jpg
+labels: cat
+
+kitchen.jpg
+labels: kitchen
+
+face.jpg
+labels: 
+
+
+
+
